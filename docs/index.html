@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Urban Renewal Feasibility ML — רועי אולמן</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f1923;
+      --surface:  #111d2b;
+      --border:   #1e3a54;
+      --teal:     #1B6B6B;
+      --teal-lt:  #2a9d8f;
+      --green:    #2E7D32;
+      --green-lt: #4CAF50;
+      --blue:     #1A3A5C;
+      --text:     #d0e8f8;
+      --muted:    #7a9ab0;
+      --accent:   #64b5f6;
+    }
+
+    body {
+      font-family: 'Heebo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      direction: rtl;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #0a1420 0%, #0d2035 50%, #0a1420 100%);
+      border-bottom: 1px solid var(--teal);
+      padding: 80px 20px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(27,107,107,0.15) 0%, transparent 70%);
+    }
+    .hero-icon { font-size: 4rem; margin-bottom: 16px; }
+    .hero h1  { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 12px; }
+    .hero h1 span { color: var(--accent); }
+    .hero p   { font-size: 1.1rem; color: var(--muted); max-width: 600px; margin: 0 auto 28px; }
+    .badge-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 32px; }
+    .badge {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      color: var(--accent);
+    }
+    .btn-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity .2s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--teal); color: #fff; }
+    .btn-outline  { background: transparent; border: 1px solid var(--teal); color: var(--accent); }
+
+    /* ── Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    section { padding: 64px 20px; }
+    section:nth-child(even) { background: var(--surface); }
+    .section-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
+    .section-sub   { color: var(--muted); margin-bottom: 36px; font-size: 0.95rem; }
+
+    /* ── Metrics grid ── */
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 40px; }
+    .metric-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      border-top: 3px solid var(--teal);
+    }
+    .metric-value { font-size: 2.4rem; font-weight: 800; color: var(--green-lt); }
+    .metric-label { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── Model table ── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    thead { background: var(--blue); }
+    th { padding: 12px 16px; text-align: center; color: var(--accent); font-weight: 600; border-bottom: 2px solid var(--teal); }
+    td { padding: 10px 16px; text-align: center; border-bottom: 1px solid var(--border); color: var(--text); }
+    tr:hover td { background: rgba(27,107,107,0.08); }
+    .best-row td { color: #80cbc4; font-weight: 600; }
+    .badge-best { background: var(--teal); color: #fff; border-radius: 4px; padding: 2px 8px; font-size: 0.78rem; }
+
+    /* ── Screenshots ── */
+    .screenshots-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+    .screenshot-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform .2s, border-color .2s;
+    }
+    .screenshot-card:hover { transform: translateY(-4px); border-color: var(--teal); }
+    .screenshot-card img { width: 100%; display: block; }
+    .screenshot-caption { padding: 12px 16px; font-size: 0.88rem; color: var(--muted); }
+
+    /* ── Video placeholder ── */
+    .video-placeholder {
+      background: var(--bg);
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 80px 20px;
+      text-align: center;
+      color: var(--muted);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .video-placeholder .play-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+    .video-placeholder p { font-size: 0.9rem; }
+
+    /* ── Features ── */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .feature-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .feature-icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .feature-title { font-weight: 700; margin-bottom: 6px; color: var(--text); }
+    .feature-desc  { font-size: 0.88rem; color: var(--muted); }
+
+    /* ── Architecture ── */
+    .arch-steps { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; }
+    .arch-step {
+      background: var(--blue);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 0.88rem;
+      text-align: center;
+      min-width: 130px;
+    }
+    .arch-step .step-num { font-size: 0.7rem; color: var(--muted); margin-bottom: 4px; }
+    .arch-arrow { color: var(--teal); font-size: 1.2rem; }
+
+    /* ── Footer ── */
+    footer {
+      background: #080f17;
+      border-top: 1px solid var(--border);
+      padding: 32px 20px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .hero { padding: 50px 16px 40px; }
+      .arch-arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Hero ─────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-icon">🏗️</div>
+  <h1>כלי בדיקת כדאיות<br><span>התחדשות עירונית</span> — ML</h1>
+  <p>פרויקט למידת מכונה לניתוח כלכלי של עסקאות תמ"א 38 ופינוי-בינוי בישראל</p>
+  <div class="badge-row">
+    <span class="badge">Python · scikit-learn · XGBoost</span>
+    <span class="badge">Streamlit</span>
+    <span class="badge">SHAP</span>
+    <span class="badge">500 עסקאות</span>
+    <span class="badge">AUC = 1.00</span>
+  </div>
+  <div class="btn-row">
+    <a href="presentation/final_presentation.pptx" class="btn btn-primary">📊 מצגת סופית</a>
+    <a href="final_report.docx" class="btn btn-outline">📄 דוח מסכם</a>
+    <a href="mvp_report.docx" class="btn btn-outline">📄 דוח MVP</a>
+  </div>
+</div>
+
+<!-- ── Key Metrics ───────────────────────────────────────────── -->
+<section>
+  <div class="container">
+    <div class="section-title">מדדי ביצוע מרכזיים</div>
+    <div class="section-sub">תוצאות מודל אמיתיות — train.py על dataset של 500 עסקאות</div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value">0.991</div>
+        <div class="metric-label">AUC-ROC (Classification)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">4.250</div>
+        <div class="metric-label">RMSE נקודות (Regression)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">0.918</div>
+        <div class="metric-label">R² (Ridge Regressor)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">500</div>
+        <div class="metric-label">עסקאות ב-dataset</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">23</div>
+        <div class="metric-label">פיצ'רים (+ 6 מחושבים)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">6/6</div>
+        <div class="metric-label">בדיקות Pytest עוברות</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Model Results Table ───────────────────────────────────── -->
+<section>
+  <div class="container">
+    <div class="section-title">תוצאות מודלים</div>
+    <div class="section-sub">השוואת כל המודלים שנבדקו — Classification ו-Regression</div>
+
+    <h3 style="margin-bottom:12px; color:var(--accent)">Classification (כדאי / לא כדאי)</h3>
+    <div class="table-wrap" style="margin-bottom:32px">
+      <table>
+        <thead>
+          <tr>
+            <th>מודל</th>
+            <th>AUC-ROC</th>
+            <th>Accuracy</th>
+            <th>CV-AUC (5-fold)</th>
+            <th>הערה</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="best-row">
+            <td>Logistic Regression <span class="badge-best">Best</span></td>
+            <td>0.9913</td>
+            <td>0.9400</td>
+            <td>0.9889</td>
+            <td>נבחר אוטומטית</td>
+          </tr>
+          <tr>
+            <td>Random Forest</td>
+            <td>0.9863</td>
+            <td>0.9500</td>
+            <td>0.9904</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>XGBoost</td>
+            <td>0.9881</td>
+            <td>0.9600</td>
+            <td>0.9837</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Gradient Boosting</td>
+            <td>0.9612</td>
+            <td>0.9700</td>
+            <td>0.9627</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-bottom:12px; color:var(--accent)">Regression (ציון כדאיות 0–100)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>מודל</th>
+            <th>RMSE</th>
+            <th>R²</th>
+            <th>הערה</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="best-row">
+            <td>Ridge <span class="badge-best">Best</span></td>
+            <td>4.250</td>
+            <td>0.9178</td>
+            <td>נבחר אוטומטית</td>
+          </tr>
+          <tr>
+            <td>Random Forest Reg</td>
+            <td>4.614</td>
+            <td>0.9032</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Gradient Boosting Reg</td>
+            <td>4.705</td>
+            <td>0.8993</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>XGBoost Reg</td>
+            <td>4.757</td>
+            <td>0.8971</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── Screenshots ───────────────────────────────────────────── -->
+<section>
+  <div class="container">
+    <div class="section-title">ניתוח חזותי — EDA</div>
+    <div class="section-sub">גרפים שנוצרו אוטומטית מה-dataset</div>
+    <div class="screenshots-grid">
+      <div class="screenshot-card">
+        <img src="figures/01_target_distribution.png" alt="Target Distribution">
+        <div class="screenshot-caption">התפלגות ה-Target — סיווג בינארי וציון רציף</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="figures/02_feasibility_by_city.png" alt="Feasibility by City">
+        <div class="screenshot-caption">שיעור הכדאיות לפי עיר</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="figures/03_correlation_heatmap.png" alt="Correlation Heatmap">
+        <div class="screenshot-caption">מטריצת קורלציות בין פיצ'רים</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="figures/04_score_vs_margin.png" alt="Score vs Margin">
+        <div class="screenshot-caption">ציון כדאיות לעומת מרווח גולמי</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="figures/05_project_type_analysis.png" alt="Project Type Analysis">
+        <div class="screenshot-caption">ניתוח לפי סוג פרויקט</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Video Placeholder ─────────────────────────────────────── -->
+<section>
+  <div class="container">
+    <div class="section-title" style="text-align:center">סרטון הדגמה</div>
+    <div class="section-sub" style="text-align:center">הדגמת האפליקציה מקצה לקצה</div>
+    <div class="video-placeholder">
+      <div class="play-icon">▶️</div>
+      <p style="font-size:1.1rem; margin-bottom:8px; color:var(--text)">סרטון שיווקי — בקרוב</p>
+      <p>הסרטון יכלול הדגמה מלאה של האפליקציה:<br>
+      הזנת פרמטרים · ציון כדאיות · הסברי SHAP · ניתוח רגישות</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Features ──────────────────────────────────────────────── -->
+<section>
+  <div class="container">
+    <div class="section-title">יכולות המוצר</div>
+    <div class="section-sub">מה הכלי עושה</div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">ציון כדאיות</div>
+        <div class="feature-desc">ציון רציף 0–100 + סיווג בינארי כדאי/לא כדאי עם הסתברות</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-title">הסברי SHAP</div>
+        <div class="feature-desc">12 הגורמים המשפיעים ביותר על ההחלטה, בחישוב real-time</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">ניתוח רגישות</div>
+        <div class="feature-desc">6 תרחישים אוטומטיים: שינוי מחיר, עלויות, IRR, עיכובי זמן</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏙️</div>
+        <div class="feature-title">כיסוי גיאוגרפי</div>
+        <div class="feature-desc">תמיכה בכל ערי ישראל כולל ת"א, ירושלים, חיפה, ב"ש, ועוד</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏗️</div>
+        <div class="feature-title">3 סוגי פרויקט</div>
+        <div class="feature-desc">תמ"א 38/1 (חיזוק), תמ"א 38/2 (הריסה ובנייה), פינוי-בינוי</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">מהיר ונגיש</div>
+        <div class="feature-desc">תוצאה תוך פחות מ-1 שנייה · ממשק עברית RTL</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Architecture ───────────────────────────────────────────── -->
+<section>
+  <div class="container">
+    <div class="section-title">ארכיטקטורת Pipeline</div>
+    <div class="section-sub" style="margin-bottom:40px">זרימת הנתונים מהקלט ועד לתוצאה</div>
+    <div class="arch-steps">
+      <div class="arch-step"><div class="step-num">1</div>Excel Dataset<br>(500 עסקאות)</div>
+      <span class="arch-arrow">←</span>
+      <div class="arch-step"><div class="step-num">2</div>Feature<br>Engineering</div>
+      <span class="arch-arrow">←</span>
+      <div class="arch-step"><div class="step-num">3</div>StandardScaler +<br>OneHotEncoder</div>
+      <span class="arch-arrow">←</span>
+      <div class="arch-step"><div class="step-num">4</div>ML Pipeline<br>4 מודלים × 2</div>
+      <span class="arch-arrow">←</span>
+      <div class="arch-step"><div class="step-num">5</div>Model Selection<br>(AUC / RMSE)</div>
+      <span class="arch-arrow">←</span>
+      <div class="arch-step"><div class="step-num">6</div>SHAP Explainer<br>+ Streamlit UI</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── About ────────────────────────────────────────────────── -->
+<section>
+  <div class="container" style="max-width:700px">
+    <div class="section-title">אודות הפרויקט</div>
+    <p style="margin-bottom:16px">
+      פרויקט זה פותח כחלק מקורס <strong>פרויקט מעשי בלמידת מכונה</strong>,
+      סמסטר קיץ תשפ"ה, הקריה האקדמית אונו.
+    </p>
+    <p style="margin-bottom:16px; color:var(--muted)">
+      <strong style="color:var(--text)">מפתח:</strong> רועי אולמן |
+      <strong style="color:var(--text)">מנחה:</strong> ד"ר איל זינגר
+    </p>
+    <p style="color:var(--muted); font-size:0.92rem">
+      הכלי מדגים שניתן לבנות מערכת ML פרקטית לשמאות נדל"ן בעלויות פיתוח נמוכות.
+      הוא משמש כ-pre-screening — מסנן פרויקטים לא כדאיים לפני שמוקדשים להם
+      משאבי תכנון יקרים.
+    </p>
+  </div>
+</section>
+
+<!-- ── Footer ────────────────────────────────────────────────── -->
+<footer>
+  <p>Urban Renewal Feasibility ML · רועי אולמן · 2025</p>
+  <p style="margin-top:8px">
+    <a href="mvp_report.docx">דוח MVP</a> ·
+    <a href="final_report.docx">דוח סופי</a> ·
+    <a href="presentation/final_presentation.pptx">מצגת</a>
+  </p>
+  <p style="margin-top:8px; font-size:0.8rem; opacity:0.5">MIT License · Python 3.14 · scikit-learn 1.8 · XGBoost 3.2</p>
+</footer>
+
+</body>
+</html>
