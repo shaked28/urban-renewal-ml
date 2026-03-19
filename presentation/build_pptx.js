@@ -30,7 +30,7 @@ function imgPath(name) {
 // ────────────────────────────────────────────────────────────────
 let pres = new pptxgen();
 pres.layout = "LAYOUT_16x9";
-pres.author = "Roi Ulman";
+pres.author = "Shaked Akrish";
 pres.title  = "Urban Renewal Feasibility ML";
 
 // ══════════════════════════════════════════════════════════════
@@ -75,7 +75,7 @@ pres.title  = "Urban Renewal Feasibility ML";
 
   // Meta info
   s.addText([
-    { text: "רועי אולמן", options: { bold: true, color: C.text } },
+    { text: "שקד עקריש", options: { bold: true, color: C.text } },
     { text: "   |   מנחה: ד\"ר איל זינגר", options: { color: C.muted } },
   ], { x: 0.4, y: 3.15, w: 9.2, h: 0.4, fontSize: 14, fontFace: "Calibri", align: "right", rtlMode: true });
 
