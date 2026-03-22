@@ -1,8 +1,3 @@
-"""
-EDA + Model Evaluation Script
-Generates charts and stats for the project notebook/report
-Run: python notebooks/eda_and_eval.py
-"""
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -37,7 +32,6 @@ BLUE  = "#1A3A5C"
 print("Loading data...")
 df = pd.read_excel(DATA_PATH, sheet_name="Dataset")
 
-# ── 1. Target distribution ─────────────────────────────────────────────────
 fig, axes = plt.subplots(1, 2, figsize=(12, 4))
 fig.patch.set_facecolor("#0f1923")
 
@@ -63,7 +57,6 @@ plt.savefig(OUT_DIR / "01_target_distribution.png", dpi=150, bbox_inches="tight"
 plt.close()
 print("  ✓ 01_target_distribution.png")
 
-# ── 2. Feasibility rate by city ────────────────────────────────────────────
 city_stats = df.groupby("עיר")["כדאי_1_לא_0"].agg(["mean","count"]).reset_index()
 city_stats.columns = ["city", "feas_rate", "count"]
 city_stats = city_stats.sort_values("feas_rate", ascending=True)
@@ -84,7 +77,6 @@ plt.savefig(OUT_DIR / "02_feasibility_by_city.png", dpi=150, bbox_inches="tight"
 plt.close()
 print("  ✓ 02_feasibility_by_city.png")
 
-# ── 3. Feature correlation heatmap ────────────────────────────────────────
 num_features = [
     "גיל_בניין_שנים", "מספר_דירות_קיימות", "שטח_ממוצע_קיים_מ2",
     "מספר_דירות_חדשות", 'מרווח_גולמי_%', 'IRR_משוער_%',
@@ -108,7 +100,6 @@ plt.savefig(OUT_DIR / "03_correlation_heatmap.png", dpi=150, bbox_inches="tight"
 plt.close()
 print("  ✓ 03_correlation_heatmap.png")
 
-# ── 4. Score vs Margin scatter ─────────────────────────────────────────────
 fig, ax = plt.subplots(figsize=(9, 6))
 fig.patch.set_facecolor("#0f1923")
 colors = [GREEN if f == 1 else RED for f in df["כדאי_1_לא_0"]]
@@ -126,7 +117,6 @@ plt.savefig(OUT_DIR / "04_score_vs_margin.png", dpi=150, bbox_inches="tight")
 plt.close()
 print("  ✓ 04_score_vs_margin.png")
 
-# ── 5. Project type comparison ─────────────────────────────────────────────
 proj_stats = df.groupby("סוג_פרויקט").agg(
     feas_rate=("כדאי_1_לא_0", "mean"),
     avg_score=("ציון_כדאיות_0_100", "mean"),
@@ -156,7 +146,6 @@ plt.savefig(OUT_DIR / "05_project_type_analysis.png", dpi=150, bbox_inches="tigh
 plt.close()
 print("  ✓ 05_project_type_analysis.png")
 
-# ── Model results table ────────────────────────────────────────────────────
 meta_path = MODELS_DIR / "model_meta.json"
 if meta_path.exists():
     with open(meta_path, encoding="utf-8") as f:

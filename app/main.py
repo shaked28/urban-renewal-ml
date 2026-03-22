@@ -1,8 +1,3 @@
-"""
-Urban Renewal Feasibility Scoring Tool
-Streamlit App — app/main.py
-Run: streamlit run app/main.py
-"""
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -16,7 +11,6 @@ sys.path.insert(0, str(ROOT))
 
 MODELS_DIR = ROOT / "models"
 
-# ── Page config ────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="כלי בדיקת כדאיות — התחדשות עירונית",
     page_icon="🏗️",
@@ -24,7 +18,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── RTL + custom CSS ────────────────────────────────────────────────────────
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&display=swap');
@@ -33,7 +26,6 @@ st.markdown("""
     .stApp { background: #0f1923; color: #e0e8f0; }
     .main .block-container { padding-top: 1.5rem; max-width: 1200px; }
 
-    /* Sidebar */
     [data-testid="stSidebar"] {
         background: #111d2b;
         border-left: 2px solid #1B6B6B;
@@ -46,7 +38,6 @@ st.markdown("""
     [data-testid="stSidebar"] input { color: #ffffff !important; background: #1a2d42 !important; }
     [data-testid="stSidebar"] .stMarkdown { color: #e8f4ff; }
 
-    /* Score card */
     .score-card {
         background: linear-gradient(135deg, #1A3A5C 0%, #0d2035 100%);
         border: 1px solid #1B6B6B;
@@ -58,13 +49,11 @@ st.markdown("""
     .score-number { font-size: 5rem; font-weight: 700; line-height: 1; }
     .score-label  { font-size: 1.1rem; color: #c8dff0; margin-top: 6px; font-weight: 500; }
 
-    /* Verdict badge */
     .verdict-feasible    { background: #1a4731; border: 1px solid #2E7D32; color: #a5d6a7;
                             border-radius: 8px; padding: 10px 20px; font-size: 1.2rem; font-weight: 700; }
     .verdict-infeasible  { background: #4a1515; border: 1px solid #c62828; color: #ffcdd2;
                             border-radius: 8px; padding: 10px 20px; font-size: 1.2rem; font-weight: 700; }
 
-    /* Metric tiles */
     .metric-tile {
         background: #111d2b;
         border: 1px solid #2a4a6a;
@@ -75,7 +64,6 @@ st.markdown("""
     .metric-label { font-size: 0.85rem; color: #90b8d8; margin-bottom: 4px; font-weight: 500; }
     .metric-value { font-size: 1.4rem; font-weight: 700; color: #eaf4ff; }
 
-    /* SHAP bar */
     .shap-row { display: flex; align-items: center; margin-bottom: 6px; direction: rtl; }
     .shap-name { width: 220px; font-size: 0.85rem; color: #c8dff0; text-align: right; padding-left: 8px; font-weight: 500; }
     .shap-bar-wrap { flex: 1; height: 18px; background: #1e3a54; border-radius: 4px; overflow: hidden; }
@@ -86,7 +74,6 @@ st.markdown("""
     div[data-testid="stNumberInput"] input,
     div[data-testid="stSelectbox"] select { direction: ltr; }
 
-    /* Number input styling */
     div[data-testid="stNumberInput"] input {
         color: #ffffff !important;
         background: #1a2d42 !important;
@@ -96,7 +83,6 @@ st.markdown("""
         font-weight: 600;
     }
 
-    /* General text brightness */
     p, span, div { color: inherit; }
     .stApp { color: #eaf4ff; }
 
@@ -113,7 +99,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ── Load models ────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_models():
     cls_path  = MODELS_DIR / "best_classifier.pkl"
@@ -134,9 +119,8 @@ def load_models():
 
 clf, reg, meta, shap_exp = load_models()
 
-# ── Helpers ────────────────────────────────────────────────────────────────
+
 def compute_derived(row: dict) -> dict:
-    """Add engineered features matching train.py"""
     r = row.copy()
     r["יחס_דירות_חדש_לישן"]    = r["מספר_דירות_חדשות"] / max(r["מספר_דירות_קיימות"], 1)
     r["הכנסה_לדירה_קיימת"]     = (r['מחיר_מכירה_למ2_חדש_ש"ח'] * r["מספר_דירות_חדשות"] * r["שטח_ממוצע_חדש_מ2"]) / max(r["מספר_דירות_קיימות"], 1)
@@ -155,7 +139,6 @@ def predict_single(row_dict: dict):
     score  = float(np.clip(reg.predict(df)[0], 0, 100))
     is_feas = int(proba >= 0.5)
 
-    # SHAP
     shap_vals = None
     if shap_exp is not None:
         try:
@@ -170,7 +153,6 @@ def predict_single(row_dict: dict):
     return proba, score, is_feas, shap_vals
 
 
-# ── UI ─────────────────────────────────────────────────────────────────────
 st.markdown("# 🏗️ כלי בדיקת כדאיות — התחדשות עירונית")
 st.markdown("#### הזן פרמטרים של פרויקט וקבל ניתוח כדאיות מיידי מבוסס ML")
 st.divider()
@@ -179,7 +161,6 @@ if clf is None:
     st.error("⚠️ מודלים לא נמצאו. הרץ תחילה: `python models/train.py`")
     st.stop()
 
-# ── Sidebar inputs ─────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("### 📋 פרמטרי הפרויקט")
     st.markdown("---")
@@ -213,16 +194,13 @@ with st.sidebar:
 
     calc_btn = st.button("🔍 חשב כדאיות")
 
-# ── Calculations ────────────────────────────────────────────────────────────
 building_age  = 2024 - year_built
-sales_months  = 12          # ברירת מחדל
+sales_months  = 12
 price_old     = price_new * 0.82
 irr           = 12.0
 approval_pct  = 72.0
 total_months  = signing_months + permit_months + construct_months + sales_months
 
-# Cost estimation
-# בפרויקט 38/2 או פינוי בינוי: בנייה מחדש של כלל הדירות (קיימות + חדשות)
 is_full_rebuild   = ("38/2" in proj_type) or ("פינוי" in proj_type)
 units_to_build    = (existing_units + new_units) if is_full_rebuild else new_units
 construction_cost = units_to_build * new_sqm * cost_per_sqm
@@ -256,7 +234,6 @@ row_input = {
     'סה"כ_עלויות_ש"ח': total_cost,
 }
 
-# ── Main panel ─────────────────────────────────────────────────────────────
 if calc_btn:
     with st.spinner("מחשב..."):
         proba, score, is_feas, shap_vals = predict_single(row_input)
@@ -312,7 +289,6 @@ if calc_btn:
                 <div class="metric-value" style="font-size:1.1rem">{val}</div>
             </div>""", unsafe_allow_html=True)
 
-    # ── SHAP section ────────────────────────────────────────────────────
     st.divider()
     if shap_vals:
         st.markdown("### 🔍 גורמים משפיעים על ההחלטה (SHAP)")
@@ -324,7 +300,6 @@ if calc_btn:
             pct = abs(val) / max_abs * 100
             color = "#2E7D32" if val > 0 else "#c62828"
             direction = "חיובי ↑" if val > 0 else "שלילי ↓"
-            # Shorten Hebrew feature names for display
             display_name = name.split("_")[0] if len(name) > 20 else name
             shap_html += f"""
             <div class="shap-row">
@@ -340,7 +315,6 @@ if calc_btn:
     else:
         st.info("SHAP לא זמין — הרץ training עם מודל עץ (RandomForest/XGBoost) כדי לאפשר הסברים.")
 
-    # ── Sensitivity cards ───────────────────────────────────────────────
     st.divider()
     st.markdown("### 📊 ניתוח רגישות — מה קורה אם...")
     def _sens_margin(cost_factor):
@@ -385,7 +359,6 @@ if calc_btn:
         """, unsafe_allow_html=True)
 
 else:
-    # Welcome state
     st.markdown("""
     <div style="text-align:center; padding: 60px 20px; color: #5a7a90">
         <div style="font-size:4rem">🏗️</div>

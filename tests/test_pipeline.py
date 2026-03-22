@@ -1,6 +1,3 @@
-"""
-Basic pipeline tests — run: python -m pytest tests/ -v
-"""
 import pytest
 import pandas as pd
 import numpy as np

@@ -1,13 +1,10 @@
-"""
-Urban Renewal Feasibility - ML Training Pipeline
-"""
 import pandas as pd
 import numpy as np
 import joblib
 import json
 from pathlib import Path
 
-from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression, Ridge
@@ -39,7 +36,6 @@ MODELS_DIR = Path(__file__).parent
 def load_and_prepare(path=DATA_PATH):
     df = pd.read_excel(path, sheet_name="Dataset")
 
-    # ── Feature engineering ────────────────────────────────────────────
     df["יחס_דירות_חדש_לישן"]      = df["מספר_דירות_חדשות"] / df["מספר_דירות_קיימות"]
     df["הכנסה_לדירה_קיימת"]       = df['הכנסות_ממכירת_דירות_ש"ח'] / df["מספר_דירות_קיימות"]
     df["עלות_לדירה_חדשה"]         = df['סה"כ_עלויות_ש"ח'] / df["מספר_דירות_חדשות"].clip(lower=1)
@@ -47,9 +43,7 @@ def load_and_prepare(path=DATA_PATH):
     df["מינוף_שטח"]               = df["שטח_כולל_חדש_מ2"] / (df["מספר_דירות_קיימות"] * df["שטח_ממוצע_קיים_מ2"])
     df["עלות_לקיים_יחסי"]         = df['עלות_בנייה_ש"ח'] / df['הכנסות_ממכירת_דירות_ש"ח'].clip(lower=1)
 
-    # Categorical features
     cat_cols  = ["עיר", "סוג_פרויקט"]
-    # Numeric features — all relevant columns
     num_cols  = [
         "גיל_בניין_שנים", "מספר_דירות_קיימות", "שטח_ממוצע_קיים_מ2",
         "מספר_קומות_קיים", "מספר_דירות_חדשות", "שטח_ממוצע_חדש_מ2",
@@ -89,7 +83,6 @@ def train_all(X, y_cls, y_reg, num_cols, cat_cols):
 
     results = {}
 
-    # ── Classification models ─────────────────────────────────────────
     cls_models = {
         "logistic_regression": LogisticRegression(max_iter=1000, random_state=42, class_weight="balanced"),
         "random_forest": RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42, class_weight="balanced"),
@@ -121,7 +114,6 @@ def train_all(X, y_cls, y_reg, num_cols, cat_cols):
             best_cls_name  = name
             best_cls_pipe  = pipe
 
-    # ── Regression models ─────────────────────────────────────────────
     reg_models = {
         "ridge": Ridge(alpha=1.0),
         "random_forest_reg": RandomForestRegressor(n_estimators=200, max_depth=10, random_state=42),
@@ -132,7 +124,6 @@ def train_all(X, y_cls, y_reg, num_cols, cat_cols):
             n_estimators=300, max_depth=5, learning_rate=0.05,
             random_state=42, verbosity=0
         )
-    # Fix: gradient boosting is classifier, use real regressor
     reg_models["gradient_boosting_reg"] = __import__(
         "sklearn.ensemble", fromlist=["GradientBoostingRegressor"]
     ).GradientBoostingRegressor(n_estimators=200, max_depth=4, learning_rate=0.05, random_state=42)
@@ -154,11 +145,9 @@ def train_all(X, y_cls, y_reg, num_cols, cat_cols):
             best_reg_name  = name
             best_reg_pipe  = pipe
 
-    # ── Save best models ──────────────────────────────────────────────
     joblib.dump(best_cls_pipe, MODELS_DIR / "best_classifier.pkl")
     joblib.dump(best_reg_pipe, MODELS_DIR / "best_regressor.pkl")
 
-    # Save feature info for app
     prep_fitted = best_cls_pipe.named_steps["prep"]
     cat_feature_names = prep_fitted.named_transformers_["cat"].get_feature_names_out(cat_cols).tolist()
     all_feature_names = num_cols + cat_feature_names
@@ -182,7 +171,6 @@ def train_all(X, y_cls, y_reg, num_cols, cat_cols):
     print(f"✓ Best regressor  : {best_reg_name} (RMSE={best_reg_score:.3f})")
     print(f"✓ Models saved to {MODELS_DIR}")
 
-    # ── SHAP explainer (on best classifier) ──────────────────────────
     if HAS_SHAP:
         try:
             X_tr_enc = best_cls_pipe.named_steps["prep"].transform(X_tr)
