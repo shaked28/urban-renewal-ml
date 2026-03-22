@@ -8,6 +8,10 @@ import seaborn as sns
 import json
 import sys
 from pathlib import Path
+from bidi.algorithm import get_display
+
+def fix_heb(text):
+    return get_display(str(text))
 
 ROOT = Path(__file__).parent.parent
 DATA_PATH = ROOT / "data" / "urban_renewal_dataset.xlsx"
@@ -64,7 +68,8 @@ city_stats = city_stats.sort_values("feas_rate", ascending=True)
 fig, ax = plt.subplots(figsize=(10, 7))
 fig.patch.set_facecolor("#0f1923")
 colors = [GREEN if r >= 0.55 else RED for r in city_stats["feas_rate"]]
-bars = ax.barh(city_stats["city"], city_stats["feas_rate"] * 100,
+city_stats["city_display"] = city_stats["city"].apply(fix_heb)
+bars = ax.barh(city_stats["city_display"], city_stats["feas_rate"] * 100,
                color=colors, edgecolor="#0f1923", height=0.7)
 ax.set_xlabel("Feasibility Rate (%)")
 ax.set_title("Feasibility Rate by City", fontsize=14, pad=12)
@@ -84,6 +89,8 @@ num_features = [
     "ציון_כדאיות_0_100", "כדאי_1_לא_0"
 ]
 corr = df[num_features].corr()
+corr.index   = [fix_heb(c) for c in corr.index]
+corr.columns = [fix_heb(c) for c in corr.columns]
 
 fig, ax = plt.subplots(figsize=(11, 9))
 fig.patch.set_facecolor("#0f1923")
@@ -136,7 +143,8 @@ for ax, (col, title, fmt) in zip(axes, metrics):
     bars = ax.bar(proj_stats["סוג_פרויקט"], proj_stats[col],
                   color=[TEAL, "#1a6b3a", "#1a3a6b"], edgecolor="#0f1923")
     ax.set_title(title, fontsize=11)
-    ax.set_xticklabels(proj_stats["סוג_פרויקט"], rotation=15, ha="right", fontsize=8)
+    ax.set_xticks(range(len(proj_stats)))
+    ax.set_xticklabels([fix_heb(v) for v in proj_stats["סוג_פרויקט"]], rotation=15, ha="right", fontsize=8)
     for bar, val in zip(bars, proj_stats[col]):
         ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
                 fmt(val), ha="center", fontsize=9, color="#d0e8f8")
