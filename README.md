@@ -9,12 +9,17 @@
 
 ---
 
-## 🚀 Live Demo
+## 🚀 הפעלה — מחשבון בדפדפן
 
-**אפליקציה חיה:** https://urban-renewal-ml.streamlit.app/
+**מחשבון חי:** [https://shaked28.github.io/urban-renewal-ml/calculator.html](https://shaked28.github.io/urban-renewal-ml/calculator.html)
 
-> ה-URL ייווצר לאחר דחיפת הרפו ל-GitHub ופריסה ב-Streamlit Community Cloud.
-> הוראות פריסה צעד-אחר-צעד נמצאות בקובץ [`DEPLOY.md`](DEPLOY.md).
+המחשבון רץ ישירות בדפדפן, ללא שרת וללא התקנה. מבוסס על נוסחת הניקוד המקורית
+של ה-dataset (`score = 38 + 0.6×margin% + 0.15×approval%`).
+
+> כדי שהקישור יעבוד יש להפעיל GitHub Pages (פעם אחת):
+> Settings → Pages → Source: `Deploy from a branch` → Branch: `main` / `/docs` → Save.
+>
+> כחלופה: הורד את [`calculator.html`](calculator.html) ופתח ישירות בדפדפן — עובד גם offline.
 
 ---
 
@@ -158,24 +163,19 @@ MIT
 
 ---
 
-## Deployment (Streamlit Community Cloud)
+## Hosting — GitHub Pages
 
-האפליקציה נפרסת חינם ב-Streamlit Community Cloud (אינה רצה מקומית בלבד).
-ראה [`DEPLOY.md`](DEPLOY.md) להוראות מלאות. תמצית:
+הקובץ [`calculator.html`](calculator.html) הוא מחשבון JavaScript עצמאי שעובד בדפדפן ללא שרת.
+לפרסום ציבורי דרך GitHub Pages:
 
-```bash
-# 1. צור רפו ב-GitHub: shaked-akrish/urban-renewal-ml (Public)
-git remote set-url origin https://github.com/shaked-akrish/urban-renewal-ml.git
-git add -A
-git commit -m "Prepare for Streamlit Cloud deployment"
-git push -u origin main
+1. בעמוד הרפו ב-GitHub: **Settings** → **Pages**
+2. תחת **Source** בחר: `Deploy from a branch`
+3. **Branch**: `main` · **Folder**: `/docs`
+4. **Save** → לאחר ~דקה האתר יהיה זמין ב:
+   `https://shaked28.github.io/urban-renewal-ml/`
+   והמחשבון: `https://shaked28.github.io/urban-renewal-ml/calculator.html`
 
-# 2. גש ל-https://share.streamlit.io
-# 3. New app → בחר את הרפו → branch=main → main file=app/main.py → Deploy
-# 4. עדכן את docs/index.html עם ה-URL הסופי שתקבל
-```
+לחלופין — אפשר לפתוח את `calculator.html` ישירות בדפדפן מקומי (גם offline).
 
-קבצי תצורה לפריסה:
-- `runtime.txt` → `python-3.12`
-- `.streamlit/config.toml` → תמה כהה + RTL
-- `requirements.txt` → טווחי גרסאות תואמים ל-Python 3.12
+המודלים המאומנים (`*.pkl`) ו-Streamlit (`app/main.py`) זמינים לפיתוח מקומי
+לחוקרים שרוצים את ה-pipeline המלא של ה-ML עם SHAP. ראה [`DEPLOY.md`](DEPLOY.md).

@@ -1,465 +1,700 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Urban Renewal Feasibility ML — שקד עקריש</title>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מחשבון כדאיות התחדשות עירונית — שקד עקריש</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --bg:       #0f1923;
-      --surface:  #111d2b;
-      --border:   #1e3a54;
-      --teal:     #1B6B6B;
-      --teal-lt:  #2a9d8f;
-      --green:    #2E7D32;
-      --green-lt: #4CAF50;
-      --blue:     #1A3A5C;
-      --text:     #d0e8f8;
-      --muted:    #7a9ab0;
-      --accent:   #64b5f6;
-    }
+  :root {
+    --bg:        #0f1923;
+    --surface:   #111d2b;
+    --surface-2: #1a2d42;
+    --border:    #2a4a6a;
+    --teal:      #1B6B6B;
+    --teal-lt:   #2a9d8f;
+    --green:     #2E7D32;
+    --green-lt:  #66BB6A;
+    --red:       #C62828;
+    --red-lt:    #ef9a9a;
+    --navy:      #1A3A5C;
+    --text:      #e0e8f0;
+    --muted:     #7a9ab0;
+    --accent:    #64b5f6;
+  }
 
-    body {
-      font-family: 'Heebo', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.7;
-      direction: rtl;
-    }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    direction: rtl;
+    min-height: 100vh;
+  }
 
-    /* ── Hero ── */
-    .hero {
-      background: linear-gradient(135deg, #0a1420 0%, #0d2035 50%, #0a1420 100%);
-      border-bottom: 1px solid var(--teal);
-      padding: 80px 20px 60px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(27,107,107,0.15) 0%, transparent 70%);
-    }
-    .hero-icon { font-size: 4rem; margin-bottom: 16px; }
-    .hero h1  { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 12px; }
-    .hero h1 span { color: var(--accent); }
-    .hero p   { font-size: 1.1rem; color: var(--muted); max-width: 600px; margin: 0 auto 28px; }
-    .badge-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 32px; }
-    .badge {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 6px 14px;
-      font-size: 0.82rem;
-      color: var(--accent);
-    }
-    .btn-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
-    .btn {
-      display: inline-block;
-      padding: 12px 28px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: opacity .2s;
-    }
-    .btn:hover { opacity: 0.85; }
-    .btn-primary { background: var(--teal); color: #fff; }
-    .btn-outline  { background: transparent; border: 1px solid var(--teal); color: var(--accent); }
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #0a1420 0%, #0d2035 50%, #0a1420 100%);
+    border-bottom: 1px solid var(--teal);
+    padding: 22px 28px;
+  }
+  .header-inner { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .header h1 { font-size: 1.4rem; font-weight: 800; color:#fff; }
+  .header h1 .icon { margin-left:8px; }
+  .header h1 .accent { color: var(--accent); }
+  .header-meta { font-size: 0.82rem; color: var(--muted); }
+  .header-meta strong { color: var(--text); }
 
-    /* ── Layout ── */
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-    section { padding: 64px 20px; }
-    section:nth-child(even) { background: var(--surface); }
-    .section-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
-    .section-sub   { color: var(--muted); margin-bottom: 36px; font-size: 0.95rem; }
+  /* ── Layout ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 70px);
+  }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
 
-    /* ── Metrics grid ── */
-    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 40px; }
-    .metric-card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-      border-top: 3px solid var(--teal);
-    }
-    .metric-value { font-size: 2.4rem; font-weight: 800; color: var(--green-lt); }
-    .metric-label { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+  /* ── Sidebar (form) ── */
+  aside.sidebar {
+    background: var(--surface);
+    border-left: 2px solid var(--teal);
+    padding: 22px 18px;
+    overflow-y: auto;
+  }
+  aside.sidebar h2 {
+    font-size: 1.05rem;
+    color: var(--accent);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .group { margin-bottom: 18px; }
+  .group-title {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .field { margin-bottom: 10px; }
+  .field label {
+    display: block;
+    font-size: 0.84rem;
+    color: #c8dff0;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .field select, .field input[type="number"] {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.92rem;
+    direction: ltr;
+    text-align: left;
+  }
+  .field select { direction: rtl; text-align: right; }
+  .field select:focus, .field input:focus {
+    outline: none;
+    border-color: var(--teal-lt);
+    box-shadow: 0 0 0 2px rgba(42,157,143,0.25);
+  }
+  .field .hint { font-size: 0.74rem; color: var(--muted); margin-top: 3px; }
 
-    /* ── Model table ── */
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    thead { background: var(--blue); }
-    th { padding: 12px 16px; text-align: center; color: var(--accent); font-weight: 600; border-bottom: 2px solid var(--teal); }
-    td { padding: 10px 16px; text-align: center; border-bottom: 1px solid var(--border); color: var(--text); }
-    tr:hover td { background: rgba(27,107,107,0.08); }
-    .best-row td { color: #80cbc4; font-weight: 600; }
-    .badge-best { background: var(--teal); color: #fff; border-radius: 4px; padding: 2px 8px; font-size: 0.78rem; }
+  .calc-btn {
+    width: 100%;
+    padding: 13px 14px;
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-lt) 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: 8px;
+  }
+  .calc-btn:hover { opacity: 0.9; }
+  .calc-btn:active { transform: scale(0.98); }
 
-    /* ── Screenshots ── */
-    .screenshots-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-    .screenshot-card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      transition: transform .2s, border-color .2s;
-    }
-    .screenshot-card:hover { transform: translateY(-4px); border-color: var(--teal); }
-    .screenshot-card img { width: 100%; display: block; }
-    .screenshot-caption { padding: 12px 16px; font-size: 0.88rem; color: var(--muted); }
+  /* ── Main panel ── */
+  main.panel { padding: 24px 28px; }
 
-    /* ── Video placeholder ── */
-    .video-placeholder {
-      background: var(--bg);
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 80px 20px;
-      text-align: center;
-      color: var(--muted);
-      max-width: 720px;
-      margin: 0 auto;
-    }
-    .video-placeholder .play-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
-    .video-placeholder p { font-size: 0.9rem; }
+  .placeholder {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+  }
+  .placeholder .big-icon { font-size: 4.5rem; margin-bottom: 12px; }
+  .placeholder h2 { color: #7a9ab0; font-size: 1.4rem; margin-bottom: 10px; }
+  .placeholder p { font-size: 0.92rem; max-width: 520px; margin: 0 auto; }
 
-    /* ── Features ── */
-    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-    .feature-card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 20px;
-    }
-    .feature-icon { font-size: 1.8rem; margin-bottom: 10px; }
-    .feature-title { font-weight: 700; margin-bottom: 6px; color: var(--text); }
-    .feature-desc  { font-size: 0.88rem; color: var(--muted); }
+  /* ── Score area ── */
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  @media (max-width: 980px) { .score-grid { grid-template-columns: 1fr; } }
 
-    /* ── Architecture ── */
-    .arch-steps { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; }
-    .arch-step {
-      background: var(--blue);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 20px;
-      font-size: 0.88rem;
-      text-align: center;
-      min-width: 130px;
-    }
-    .arch-step .step-num { font-size: 0.7rem; color: var(--muted); margin-bottom: 4px; }
-    .arch-arrow { color: var(--teal); font-size: 1.2rem; }
+  .score-card {
+    background: linear-gradient(135deg, var(--navy) 0%, #0d2035 100%);
+    border: 1px solid var(--teal);
+    border-radius: 12px;
+    padding: 28px 24px;
+    text-align: center;
+  }
+  .score-number { font-size: 5rem; font-weight: 800; line-height: 1; }
+  .score-label  { font-size: 1rem; color: #c8dff0; margin-top: 8px; font-weight: 500; }
+  .verdict {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  .verdict-feasible {
+    background: #1a4731;
+    border: 1px solid var(--green);
+    color: #a5d6a7;
+  }
+  .verdict-infeasible {
+    background: #4a1515;
+    border: 1px solid var(--red);
+    color: #ffcdd2;
+  }
+  .proba { color: #a0b8cc; font-size: 0.88rem; margin-top: 12px; }
 
-    /* ── Footer ── */
-    footer {
-      background: #080f17;
-      border-top: 1px solid var(--border);
-      padding: 32px 20px;
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-    footer a { color: var(--accent); text-decoration: none; }
+  .info-card h3 {
+    font-size: 0.92rem;
+    color: var(--accent);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .metric-tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 14px;
+    margin-bottom: 8px;
+  }
+  .metric-tile .label { font-size: 0.78rem; color: #90b8d8; margin-bottom: 3px; font-weight: 500; }
+  .metric-tile .value { font-size: 1.15rem; font-weight: 700; color: #eaf4ff; }
+  .metric-tile .value.profit-pos { color: var(--green-lt); }
+  .metric-tile .value.profit-neg { color: var(--red-lt); }
 
-    @media (max-width: 600px) {
-      .hero { padding: 50px 16px 40px; }
-      .arch-arrow { display: none; }
-    }
-  </style>
+  /* ── Factor breakdown ── */
+  .section-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 28px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .shap-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+  .shap-name { width: 200px; font-size: 0.86rem; color: #c8dff0; text-align: right; font-weight: 500; }
+  .shap-bar-wrap { flex: 1; height: 18px; background: #1e3a54; border-radius: 4px; overflow: hidden; position: relative; }
+  .shap-bar { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+  .shap-bar-pos { background: var(--green); }
+  .shap-bar-neg { background: var(--red); }
+  .shap-val { width: 100px; font-size: 0.82rem; font-weight: 600; text-align: left; }
+  .shap-val.pos { color: var(--green-lt); }
+  .shap-val.neg { color: var(--red-lt); }
+
+  /* ── Sensitivity ── */
+  .sens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .sens-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .sens-card .scenario {
+    font-size: 0.82rem;
+    color: #90b8d8;
+    margin-bottom: 8px;
+    font-weight: 600;
+    min-height: 36px;
+  }
+  .sens-card .score-big { font-size: 2.1rem; font-weight: 700; color: #eaf4ff; line-height: 1; }
+  .sens-card .delta { font-size: 0.92rem; font-weight: 700; margin: 4px 0; }
+  .sens-card .delta.up   { color: var(--green-lt); }
+  .sens-card .delta.down { color: var(--red-lt); }
+  .sens-card .delta.flat { color: #a0b8cc; }
+  .sens-card .v-tag {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+  .sens-card .v-tag.feasible    { background: #1a4731; color: var(--green-lt); }
+  .sens-card .v-tag.infeasible  { background: #4a1515; color: var(--red-lt); }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 40px;
+    padding: 18px 0 12px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+  footer strong { color: #c8dff0; }
+</style>
 </head>
 <body>
 
-<!-- ── Hero ─────────────────────────────────────────────────── -->
-<div class="hero">
-  <div class="hero-icon">🏗️</div>
-  <h1>כלי בדיקת כדאיות<br><span>התחדשות עירונית</span> — ML</h1>
-  <p>פרויקט למידת מכונה לניתוח כלכלי של עסקאות תמ"א 38 ופינוי-בינוי בישראל</p>
-  <div class="badge-row">
-    <span class="badge">Python · scikit-learn · XGBoost</span>
-    <span class="badge">Streamlit</span>
-    <span class="badge">SHAP</span>
-    <span class="badge">500 עסקאות</span>
-    <span class="badge">AUC = 0.991</span>
+<header class="header">
+  <div class="header-inner">
+    <h1><span class="icon">🏗️</span> מחשבון כדאיות — <span class="accent">התחדשות עירונית</span></h1>
+    <div class="header-meta">
+      <strong>שקד עקריש</strong> · הקריה האקדמית אונו · מנחה: ד״ר איל זינגר
+    </div>
   </div>
-  <div class="btn-row">
-    <a href="calculator.html" class="btn btn-primary">🚀 פתח את המחשבון</a>
-    <a href="presentation/final_presentation.pptx" class="btn btn-outline">📊 מצגת סופית</a>
-    <a href="final_report.docx" class="btn btn-outline">📄 דוח מסכם</a>
-    <a href="mvp_report.docx" class="btn btn-outline">📄 דוח MVP</a>
-  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ── Sidebar form ── -->
+  <aside class="sidebar">
+    <h2>📋 פרמטרי הפרויקט</h2>
+
+    <div class="group">
+      <div class="group-title">📍 מיקום וסוג</div>
+      <div class="field">
+        <label for="city">עיר</label>
+        <select id="city">
+          <option value="תל אביב-יפו">תל אביב-יפו</option>
+          <option value="רמת גן">רמת גן</option>
+          <option value="גבעתיים">גבעתיים</option>
+          <option value="הרצליה">הרצליה</option>
+          <option value="רעננה">רעננה</option>
+          <option value="כפר סבא">כפר סבא</option>
+          <option value="פתח תקווה">פתח תקווה</option>
+          <option value="ראשון לציון">ראשון לציון</option>
+          <option value="חולון">חולון</option>
+          <option value="בת ים">בת ים</option>
+          <option value="רחובות">רחובות</option>
+          <option value="נס ציונה">נס ציונה</option>
+          <option value="ירושלים">ירושלים</option>
+          <option value="חיפה">חיפה</option>
+          <option value="נתניה">נתניה</option>
+          <option value="מודיעין">מודיעין</option>
+          <option value="אשדוד">אשדוד</option>
+          <option value="אשקלון">אשקלון</option>
+          <option value="באר שבע">באר שבע</option>
+          <option value="קריית אתא">קריית אתא</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="proj-type">סוג פרויקט</label>
+        <select id="proj-type">
+          <option value="תמא 38/1">תמ״א 38/1 (חיזוק)</option>
+          <option value="תמא 38/2">תמ״א 38/2 (הריסה ובנייה)</option>
+          <option value="פינוי-בינוי">פינוי-בינוי</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">🏢 מאפייני הבניין</div>
+      <div class="field">
+        <label for="year-built">שנת בנייה</label>
+        <input type="number" id="year-built" min="1950" max="1995" value="1975" step="1">
+      </div>
+      <div class="field">
+        <label for="existing-units">מספר דירות קיימות</label>
+        <input type="number" id="existing-units" min="6" max="60" value="16" step="1">
+      </div>
+      <div class="field">
+        <label for="existing-sqm">שטח דירות ממוצע (מ״ר)</label>
+        <input type="number" id="existing-sqm" min="40" max="150" value="80" step="5">
+      </div>
+      <div class="field">
+        <label for="floors">מספר קומות</label>
+        <input type="number" id="floors" min="2" max="12" value="4" step="1">
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">🏗️ פרמטרי בנייה</div>
+      <div class="field">
+        <label for="new-units">תוספת דירות</label>
+        <input type="number" id="new-units" min="2" max="80" value="12" step="1">
+      </div>
+      <div class="field">
+        <label for="new-sqm">שטח ממוצע לדירה חדשה (מ״ר)</label>
+        <input type="number" id="new-sqm" min="40" max="150" value="80" step="5">
+      </div>
+      <div class="field">
+        <label for="cost-per-sqm">עלות בנייה למ״ר (₪)</label>
+        <input type="number" id="cost-per-sqm" min="3000" max="25000" value="10000" step="500">
+        <div class="hint">ב-38/2 ופינוי-בינוי — עלות כוללת קיימות + חדשות</div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">💰 מחיר</div>
+      <div class="field">
+        <label for="price-new">מחיר למ״ר לאחר בנייה (₪)</label>
+        <input type="number" id="price-new" min="10000" max="80000" value="35000" step="1000">
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">⏱️ לוח זמנים</div>
+      <div class="field">
+        <label for="signing-months">חודשי החתמת דיירים</label>
+        <input type="number" id="signing-months" min="3" max="36" value="12" step="1">
+      </div>
+      <div class="field">
+        <label for="permit-months">חודשי היתר</label>
+        <input type="number" id="permit-months" min="10" max="40" value="22" step="1">
+      </div>
+      <div class="field">
+        <label for="construct-months">חודשי בנייה</label>
+        <input type="number" id="construct-months" min="12" max="48" value="24" step="1">
+      </div>
+    </div>
+
+    <button id="calc-btn" class="calc-btn">🔍 חשב כדאיות</button>
+  </aside>
+
+  <!-- ── Main panel ── -->
+  <main class="panel">
+    <div id="placeholder" class="placeholder">
+      <div class="big-icon">🏗️</div>
+      <h2>מלא את הפרמטרים בסרגל הצד ולחץ "חשב כדאיות"</h2>
+      <p>
+        הכלי מנתח פרויקטי תמ״א 38/1, תמ״א 38/2 ופינוי-בינוי ומחזיר ציון כדאיות (0–100),
+        סיווג בינארי, פירוק גורמים משפיעים, וניתוח רגישות לחמישה תרחישים.
+      </p>
+    </div>
+
+    <div id="results" style="display:none;">
+      <div class="score-grid">
+        <!-- Score card -->
+        <div class="score-card">
+          <div id="score-number" class="score-number">—</div>
+          <div class="score-label">ציון כדאיות (0–100)</div>
+          <div id="verdict" class="verdict">—</div>
+          <div id="proba" class="proba">—</div>
+        </div>
+
+        <!-- Economic summary -->
+        <div class="info-card">
+          <h3>סיכום כלכלי</h3>
+          <div class="metric-tile"><div class="label">הכנסות צפויות</div><div class="value" id="m-revenue">—</div></div>
+          <div class="metric-tile"><div class="label">עלויות כוללות</div><div class="value" id="m-cost">—</div></div>
+          <div class="metric-tile"><div class="label">רווח גולמי</div><div class="value" id="m-profit">—</div></div>
+          <div class="metric-tile"><div class="label">מרווח גולמי</div><div class="value" id="m-margin">—</div></div>
+          <div class="metric-tile"><div class="label">IRR משוערת</div><div class="value" id="m-irr">—</div></div>
+        </div>
+
+        <!-- Project params -->
+        <div class="info-card">
+          <h3>פרמטרי פרויקט</h3>
+          <div class="metric-tile"><div class="label">סוג</div><div class="value" id="p-type" style="font-size:1rem">—</div></div>
+          <div class="metric-tile"><div class="label">עיר</div><div class="value" id="p-city" style="font-size:1rem">—</div></div>
+          <div class="metric-tile"><div class="label">גיל בניין</div><div class="value" id="p-age" style="font-size:1rem">—</div></div>
+          <div class="metric-tile"><div class="label">דירות: קיים → חדש</div><div class="value" id="p-units" style="font-size:1rem">—</div></div>
+          <div class="metric-tile"><div class="label">משך כולל</div><div class="value" id="p-duration" style="font-size:1rem">—</div></div>
+        </div>
+      </div>
+
+      <div class="section-title">🔍 גורמים משפיעים על ההחלטה</div>
+      <div id="factors-container"></div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-top:8px;font-style:italic">
+        ירוק = תורם לכדאיות · אדום = תורם נגד · ערכים יחסיים מהמשקלות בנוסחת הניקוד
+      </div>
+
+      <div class="section-title">📊 ניתוח רגישות — מה קורה אם...</div>
+      <div id="sens-container" class="sens-grid"></div>
+    </div>
+
+    <footer>
+      מחשבון מבוסס נוסחת הניקוד של ה-dataset הסינתטי
+      (<code>score = 38 + 0.6×margin% + 0.15×approval%</code>) ·
+      פותח ע״י <strong>שקד עקריש</strong> · הקריה האקדמית אונו · 2025
+    </footer>
+  </main>
 </div>
 
-<!-- ── Key Metrics ───────────────────────────────────────────── -->
-<section>
-  <div class="container">
-    <div class="section-title">מדדי ביצוע מרכזיים</div>
-    <div class="section-sub">תוצאות מודל אמיתיות — train.py על dataset של 500 עסקאות</div>
-    <div class="metrics-grid">
-      <div class="metric-card">
-        <div class="metric-value">0.991</div>
-        <div class="metric-label">AUC-ROC (Classification)</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-value">4.250</div>
-        <div class="metric-label">RMSE נקודות (Regression)</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-value">0.918</div>
-        <div class="metric-label">R² (Ridge Regressor)</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-value">500</div>
-        <div class="metric-label">עסקאות ב-dataset</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-value">22+6</div>
-        <div class="metric-label">פיצ'רים בסיסיים + מחושבים</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-value">6/6</div>
-        <div class="metric-label">בדיקות Pytest עוברות</div>
-      </div>
-    </div>
-  </div>
-</section>
+<script>
+// ════════════════════════════════════════════════════════════════
+// City approval baselines (mimics dataset distribution)
+// Higher tier → higher approval probability
+// ════════════════════════════════════════════════════════════════
+const CITY_APPROVAL = {
+  "תל אביב-יפו": 82, "רמת גן": 80, "גבעתיים": 78, "הרצליה": 78,
+  "רעננה": 74, "כפר סבא": 72, "פתח תקווה": 71, "ראשון לציון": 70,
+  "חולון": 70, "בת ים": 68, "רחובות": 68, "נס ציונה": 67,
+  "ירושלים": 65, "חיפה": 64, "נתניה": 63, "מודיעין": 65,
+  "אשדוד": 58, "אשקלון": 56, "באר שבע": 55, "קריית אתא": 54,
+};
 
-<!-- ── Model Results Table ───────────────────────────────────── -->
-<section>
-  <div class="container">
-    <div class="section-title">תוצאות מודלים</div>
-    <div class="section-sub">השוואת כל המודלים שנבדקו — Classification ו-Regression</div>
+const CITY_PRICE_FACTOR = {
+  "תל אביב-יפו": 1.45, "רמת גן": 1.30, "גבעתיים": 1.30, "הרצליה": 1.35,
+  "רעננה": 1.20, "כפר סבא": 1.10, "פתח תקווה": 1.05, "ראשון לציון": 1.05,
+  "חולון": 1.05, "בת ים": 1.00, "רחובות": 1.00, "נס ציונה": 0.98,
+  "ירושלים": 1.10, "חיפה": 0.95, "נתניה": 1.00, "מודיעין": 1.05,
+  "אשדוד": 0.85, "אשקלון": 0.80, "באר שבע": 0.75, "קריית אתא": 0.78,
+};
 
-    <h3 style="margin-bottom:12px; color:var(--accent)">Classification (כדאי / לא כדאי)</h3>
-    <div class="table-wrap" style="margin-bottom:32px">
-      <table>
-        <thead>
-          <tr>
-            <th>מודל</th>
-            <th>AUC-ROC</th>
-            <th>Accuracy</th>
-            <th>CV-AUC (5-fold)</th>
-            <th>הערה</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="best-row">
-            <td>Logistic Regression <span class="badge-best">Best</span></td>
-            <td>0.9913</td>
-            <td>0.9400</td>
-            <td>0.9889</td>
-            <td>נבחר אוטומטית</td>
-          </tr>
-          <tr>
-            <td>Random Forest</td>
-            <td>0.9863</td>
-            <td>0.9500</td>
-            <td>0.9904</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>XGBoost</td>
-            <td>0.9881</td>
-            <td>0.9600</td>
-            <td>0.9837</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Gradient Boosting</td>
-            <td>0.9612</td>
-            <td>0.9700</td>
-            <td>0.9627</td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+const TYPE_APPROVAL_DELTA = {
+  "תמא 38/1":      +8,  // simpler — higher chance of approval
+  "תמא 38/2":      0,
+  "פינוי-בינוי":   -4,  // most complex
+};
 
-    <h3 style="margin-bottom:12px; color:var(--accent)">Regression (ציון כדאיות 0–100)</h3>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>מודל</th>
-            <th>RMSE</th>
-            <th>R²</th>
-            <th>הערה</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="best-row">
-            <td>Ridge <span class="badge-best">Best</span></td>
-            <td>4.250</td>
-            <td>0.9178</td>
-            <td>נבחר אוטומטית</td>
-          </tr>
-          <tr>
-            <td>Random Forest Reg</td>
-            <td>4.614</td>
-            <td>0.9032</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Gradient Boosting Reg</td>
-            <td>4.705</td>
-            <td>0.8993</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>XGBoost Reg</td>
-            <td>4.757</td>
-            <td>0.8971</td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
+// ════════════════════════════════════════════════════════════════
+// Core calculation — replicates regenerate_dataset.py:74-81
+// ════════════════════════════════════════════════════════════════
+function calculate(inputs) {
+  const {
+    city, projType, yearBuilt, existingUnits, existingSqm, floors,
+    newUnits, newSqm, costPerSqm, priceNew,
+    signingMonths, permitMonths, constructMonths
+  } = inputs;
 
-<!-- ── Screenshots ───────────────────────────────────────────── -->
-<section>
-  <div class="container">
-    <div class="section-title">ניתוח חזותי — EDA</div>
-    <div class="section-sub">גרפים שנוצרו אוטומטית מה-dataset</div>
-    <div class="screenshots-grid">
-      <div class="screenshot-card">
-        <img src="figures/01_target_distribution.png" alt="Target Distribution">
-        <div class="screenshot-caption">התפלגות ה-Target — סיווג בינארי וציון רציף</div>
-      </div>
-      <div class="screenshot-card">
-        <img src="figures/02_feasibility_by_city.png" alt="Feasibility by City">
-        <div class="screenshot-caption">שיעור הכדאיות לפי עיר</div>
-      </div>
-      <div class="screenshot-card">
-        <img src="figures/03_correlation_heatmap.png" alt="Correlation Heatmap">
-        <div class="screenshot-caption">מטריצת קורלציות בין פיצ'רים</div>
-      </div>
-      <div class="screenshot-card">
-        <img src="figures/04_score_vs_margin.png" alt="Score vs Margin">
-        <div class="screenshot-caption">ציון כדאיות לעומת מרווח גולמי</div>
-      </div>
-      <div class="screenshot-card">
-        <img src="figures/05_project_type_analysis.png" alt="Project Type Analysis">
-        <div class="screenshot-caption">ניתוח לפי סוג פרויקט</div>
-      </div>
-    </div>
-  </div>
-</section>
+  const buildingAge = 2024 - yearBuilt;
+  const salesMonths = 12;
+  const totalMonths = signingMonths + permitMonths + constructMonths + salesMonths;
 
-<!-- ── Video Placeholder ─────────────────────────────────────── -->
-<section>
-  <div class="container">
-    <div class="section-title" style="text-align:center">סרטון הדגמה</div>
-    <div class="section-sub" style="text-align:center">הדגמת האפליקציה מקצה לקצה</div>
-    <div class="video-placeholder">
-      <div class="play-icon">▶️</div>
-      <p style="font-size:1.1rem; margin-bottom:8px; color:var(--text)">סרטון שיווקי — בקרוב</p>
-      <p>הסרטון יכלול הדגמה מלאה של האפליקציה:<br>
-      הזנת פרמטרים · ציון כדאיות · הסברי SHAP · ניתוח רגישות</p>
-    </div>
-  </div>
-</section>
+  const isFullRebuild = projType.includes("38/2") || projType.includes("פינוי");
+  const unitsToBuild  = isFullRebuild ? (existingUnits + newUnits) : newUnits;
 
-<!-- ── Features ──────────────────────────────────────────────── -->
-<section>
-  <div class="container">
-    <div class="section-title">יכולות המוצר</div>
-    <div class="section-sub">מה הכלי עושה</div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <div class="feature-title">ציון כדאיות</div>
-        <div class="feature-desc">ציון רציף 0–100 + סיווג בינארי כדאי/לא כדאי עם הסתברות</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔍</div>
-        <div class="feature-title">הסברי SHAP</div>
-        <div class="feature-desc">12 הגורמים המשפיעים ביותר על ההחלטה, בחישוב real-time</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <div class="feature-title">ניתוח רגישות</div>
-        <div class="feature-desc">6 תרחישים אוטומטיים: שינוי מחיר, עלויות, IRR, עיכובי זמן</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🏙️</div>
-        <div class="feature-title">כיסוי גיאוגרפי</div>
-        <div class="feature-desc">תמיכה בכל ערי ישראל כולל ת"א, ירושלים, חיפה, ב"ש, ועוד</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🏗️</div>
-        <div class="feature-title">3 סוגי פרויקט</div>
-        <div class="feature-desc">תמ"א 38/1 (חיזוק), תמ"א 38/2 (הריסה ובנייה), פינוי-בינוי</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <div class="feature-title">מהיר ונגיש</div>
-        <div class="feature-desc">תוצאה תוך פחות מ-1 שנייה · ממשק עברית RTL</div>
-      </div>
-    </div>
-  </div>
-</section>
+  // costs
+  const constructionCost = unitsToBuild * newSqm * costPerSqm;
+  const tenantComp       = isFullRebuild ? (6500 * existingUnits * constructMonths) : 0;
+  // approximate other costs (legal/financing/marketing) ≈ 13% of construction cost
+  const otherCosts       = constructionCost * 0.13;
+  const totalCost        = constructionCost + tenantComp + otherCosts;
 
-<!-- ── Architecture ───────────────────────────────────────────── -->
-<section>
-  <div class="container">
-    <div class="section-title">ארכיטקטורת Pipeline</div>
-    <div class="section-sub" style="margin-bottom:40px">זרימת הנתונים מהקלט ועד לתוצאה</div>
-    <div class="arch-steps">
-      <div class="arch-step"><div class="step-num">1</div>Excel Dataset<br>(500 עסקאות)</div>
-      <span class="arch-arrow">←</span>
-      <div class="arch-step"><div class="step-num">2</div>Feature<br>Engineering</div>
-      <span class="arch-arrow">←</span>
-      <div class="arch-step"><div class="step-num">3</div>StandardScaler +<br>OneHotEncoder</div>
-      <span class="arch-arrow">←</span>
-      <div class="arch-step"><div class="step-num">4</div>ML Pipeline<br>4 מודלים × 2</div>
-      <span class="arch-arrow">←</span>
-      <div class="arch-step"><div class="step-num">5</div>Model Selection<br>(AUC / RMSE)</div>
-      <span class="arch-arrow">←</span>
-      <div class="arch-step"><div class="step-num">6</div>SHAP Explainer<br>+ Streamlit UI</div>
-    </div>
-  </div>
-</section>
+  // revenue
+  const revenue      = newUnits * newSqm * priceNew;
+  const grossProfit  = revenue - totalCost;
+  const grossMargin  = revenue > 0 ? (grossProfit / revenue * 100) : 0;
 
-<!-- ── About ────────────────────────────────────────────────── -->
-<section>
-  <div class="container" style="max-width:700px">
-    <div class="section-title">אודות הפרויקט</div>
-    <p style="margin-bottom:16px">
-      פרויקט זה פותח כחלק מקורס <strong>פרויקט מעשי בלמידת מכונה</strong>,
-      סמסטר קיץ תשפ"ה, הקריה האקדמית אונו.
-    </p>
-    <p style="margin-bottom:16px; color:var(--muted)">
-      <strong style="color:var(--text)">מפתח:</strong> שקד עקריש |
-      <strong style="color:var(--text)">מנחה:</strong> ד"ר איל זינגר
-    </p>
-    <p style="color:var(--muted); font-size:0.92rem">
-      הכלי מדגים שניתן לבנות מערכת ML פרקטית לשמאות נדל"ן בעלויות פיתוח נמוכות.
-      הוא משמש לסינון מוקדם של פרויקטים לא כדאיים — לפני הקצאת משאבי תכנון יקרים.
-    </p>
-    <p style="margin-top:18px; color:var(--muted); font-size:0.88rem">
-      <strong style="color:var(--accent)">הערה:</strong>
-      המחשבון רץ ישירות בדפדפן — אין צורך בשרת או בהתקנה.
-      לחץ על כפתור <em>"🚀 פתח את המחשבון"</em> בראש העמוד כדי להזין נתונים ולקבל ניתוח כדאיות מיידי.
-    </p>
-  </div>
-</section>
+  // approval probability — combines city baseline + type delta
+  const baseApproval  = CITY_APPROVAL[city] || 65;
+  const typeDelta     = TYPE_APPROVAL_DELTA[projType] || 0;
+  const ageBonus      = buildingAge >= 45 ? 4 : (buildingAge >= 35 ? 2 : 0);
+  const approval      = Math.min(95, Math.max(35, baseApproval + typeDelta + ageBonus));
 
-<!-- ── Footer ────────────────────────────────────────────────── -->
-<footer>
-  <p>Urban Renewal Feasibility ML · שקד עקריש · 2025</p>
-  <p style="margin-top:8px">
-    <a href="mvp_report.docx">דוח MVP</a> ·
-    <a href="final_report.docx">דוח סופי</a> ·
-    <a href="presentation/final_presentation.pptx">מצגת</a>
-  </p>
-  <p style="margin-top:8px; font-size:0.8rem; opacity:0.5">MIT License · Python 3.14 · scikit-learn 1.8 · XGBoost 3.2</p>
-</footer>
+  // IRR estimate
+  const years    = totalMonths / 12;
+  const irr      = years > 0 ? (grossMargin / years) : 0;
+
+  // ── Score formula (from regenerate_dataset.py) ──
+  // score = 38 + 0.6 * clip(margin, -50, 80) + 0.15 * approval
+  const marginCapped = Math.max(-50, Math.min(80, grossMargin));
+  const baseFromMargin   = 0.6  * marginCapped;
+  const baseFromApproval = 0.15 * approval;
+  const scoreRaw  = 38 + baseFromMargin + baseFromApproval;
+  const score     = Math.max(0, Math.min(100, scoreRaw));
+  const isFeasible = score >= 55;
+
+  // probability — sigmoid centered on threshold
+  const probability = 1 / (1 + Math.exp(-(score - 55) / 8));
+
+  // ── Factor contributions (additive, in score points) ──
+  const baselineConst = 38;  // from formula
+  // negative-side factors that reduce: long duration, high cost ratio
+  const durationPenalty = Math.max(0, (totalMonths - 48) * 0.10);  // every month over 48 → -0.1
+  const costRatioPenalty = totalCost > 0 ? Math.max(0, ((totalCost / Math.max(revenue, 1)) - 0.7) * 25) : 0;
+
+  const factors = [
+    { name: "מרווח גולמי",        contrib: baseFromMargin },
+    { name: "הסתברות אישור",      contrib: baseFromApproval },
+    { name: "עיר (מיקום)",         contrib: (CITY_APPROVAL[city] - 65) * 0.10 },  // tier differential
+    { name: "סוג פרויקט",          contrib: typeDelta * 0.10 },
+    { name: "גיל הבניין",          contrib: ageBonus * 0.10 },
+    { name: "משך הפרויקט",        contrib: -durationPenalty },
+    { name: "יחס עלויות/הכנסות", contrib: -costRatioPenalty },
+    { name: "IRR משוער",          contrib: Math.max(-3, Math.min(3, (irr - 10) * 0.15)) },
+  ].sort((a,b) => Math.abs(b.contrib) - Math.abs(a.contrib));
+
+  return {
+    score, isFeasible, probability,
+    revenue, totalCost, grossProfit, grossMargin, irr, approval,
+    buildingAge, totalMonths, unitsToBuild,
+    factors,
+  };
+}
+
+// ════════════════════════════════════════════════════════════════
+// Read inputs from form
+// ════════════════════════════════════════════════════════════════
+function readInputs() {
+  return {
+    city:            document.getElementById("city").value,
+    projType:        document.getElementById("proj-type").value,
+    yearBuilt:       parseInt(document.getElementById("year-built").value) || 1975,
+    existingUnits:   parseInt(document.getElementById("existing-units").value) || 16,
+    existingSqm:     parseFloat(document.getElementById("existing-sqm").value) || 80,
+    floors:          parseInt(document.getElementById("floors").value) || 4,
+    newUnits:        parseInt(document.getElementById("new-units").value) || 12,
+    newSqm:          parseFloat(document.getElementById("new-sqm").value) || 80,
+    costPerSqm:      parseFloat(document.getElementById("cost-per-sqm").value) || 10000,
+    priceNew:        parseFloat(document.getElementById("price-new").value) || 35000,
+    signingMonths:   parseInt(document.getElementById("signing-months").value) || 12,
+    permitMonths:    parseInt(document.getElementById("permit-months").value) || 22,
+    constructMonths: parseInt(document.getElementById("construct-months").value) || 24,
+  };
+}
+
+// ════════════════════════════════════════════════════════════════
+// Format helpers
+// ════════════════════════════════════════════════════════════════
+const fmt = {
+  shekel: n => "₪" + n.toLocaleString("he-IL", { maximumFractionDigits: 0 }),
+  pct:    n => n.toFixed(1) + "%",
+  num:    n => n.toFixed(0),
+};
+
+// ════════════════════════════════════════════════════════════════
+// Render results
+// ════════════════════════════════════════════════════════════════
+function renderResults(inputs, result) {
+  document.getElementById("placeholder").style.display = "none";
+  document.getElementById("results").style.display = "block";
+
+  // Score card
+  const scoreEl = document.getElementById("score-number");
+  scoreEl.textContent = fmt.num(result.score);
+  scoreEl.style.color = result.isFeasible ? "var(--green-lt)" : "var(--red-lt)";
+
+  const verdictEl = document.getElementById("verdict");
+  verdictEl.textContent = result.isFeasible ? "✅ הפרויקט כדאי" : "❌ הפרויקט אינו כדאי";
+  verdictEl.className = "verdict " + (result.isFeasible ? "verdict-feasible" : "verdict-infeasible");
+
+  document.getElementById("proba").textContent =
+    "הסתברות כדאיות: " + (result.probability * 100).toFixed(1) + "%";
+
+  // Economic summary
+  document.getElementById("m-revenue").textContent = fmt.shekel(result.revenue);
+  document.getElementById("m-cost").textContent    = fmt.shekel(result.totalCost);
+  const profitEl = document.getElementById("m-profit");
+  profitEl.textContent = fmt.shekel(result.grossProfit);
+  profitEl.className = "value " + (result.grossProfit >= 0 ? "profit-pos" : "profit-neg");
+  document.getElementById("m-margin").textContent = fmt.pct(result.grossMargin);
+  document.getElementById("m-irr").textContent    = fmt.pct(result.irr);
+
+  // Project params
+  document.getElementById("p-type").textContent = inputs.projType;
+  document.getElementById("p-city").textContent = inputs.city;
+  document.getElementById("p-age").textContent  = result.buildingAge + " שנים";
+  document.getElementById("p-units").textContent = inputs.existingUnits + " → " + inputs.newUnits;
+  document.getElementById("p-duration").textContent = result.totalMonths + " חודשים";
+
+  // Factor breakdown
+  const factorsEl = document.getElementById("factors-container");
+  factorsEl.innerHTML = "";
+  const maxAbs = Math.max(...result.factors.map(f => Math.abs(f.contrib)), 0.1);
+  result.factors.forEach(f => {
+    const pct = Math.abs(f.contrib) / maxAbs * 100;
+    const isPos = f.contrib >= 0;
+    const row = document.createElement("div");
+    row.className = "shap-row";
+    row.innerHTML = `
+      <div class="shap-name">${f.name}</div>
+      <div class="shap-bar-wrap">
+        <div class="shap-bar ${isPos ? "shap-bar-pos" : "shap-bar-neg"}" style="width:${pct.toFixed(1)}%"></div>
+      </div>
+      <div class="shap-val ${isPos ? "pos" : "neg"}">
+        ${isPos ? "+" : ""}${f.contrib.toFixed(1)} נק׳
+      </div>
+    `;
+    factorsEl.appendChild(row);
+  });
+
+  // Sensitivity scenarios
+  const sensEl = document.getElementById("sens-container");
+  sensEl.innerHTML = "";
+  const scenarios = [
+    { name: "מחיר מכירה +10%",
+      mod: { priceNew:  inputs.priceNew * 1.10 } },
+    { name: "מחיר מכירה -10%",
+      mod: { priceNew:  inputs.priceNew * 0.90 } },
+    { name: "עלות בנייה +15%",
+      mod: { costPerSqm: inputs.costPerSqm * 1.15 } },
+    { name: "עלות בנייה -15%",
+      mod: { costPerSqm: inputs.costPerSqm * 0.85 } },
+    { name: "עיכוב 6 חודשים",
+      mod: { constructMonths: inputs.constructMonths + 6 } },
+    { name: "+20% תוספת דירות",
+      mod: { newUnits: Math.round(inputs.newUnits * 1.20) } },
+  ];
+  scenarios.forEach(sc => {
+    const altInputs = { ...inputs, ...sc.mod };
+    const altResult = calculate(altInputs);
+    const delta = altResult.score - result.score;
+    const deltaClass = delta > 0.5 ? "up" : (delta < -0.5 ? "down" : "flat");
+    const arrow = delta > 0.5 ? "▲" : (delta < -0.5 ? "▼" : "—");
+
+    const card = document.createElement("div");
+    card.className = "sens-card";
+    card.innerHTML = `
+      <div class="scenario">${sc.name}</div>
+      <div class="score-big">${fmt.num(altResult.score)}</div>
+      <div class="delta ${deltaClass}">${arrow} ${Math.abs(delta).toFixed(1)} נק׳</div>
+      <div class="v-tag ${altResult.isFeasible ? "feasible" : "infeasible"}">
+        ${altResult.isFeasible ? "✅ כדאי" : "❌ לא כדאי"}
+      </div>
+    `;
+    sensEl.appendChild(card);
+  });
+
+  document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ════════════════════════════════════════════════════════════════
+// Wire up
+// ════════════════════════════════════════════════════════════════
+document.getElementById("calc-btn").addEventListener("click", () => {
+  const inputs = readInputs();
+  const result = calculate(inputs);
+  renderResults(inputs, result);
+});
+
+// Allow Enter in any number field to trigger calculation
+document.querySelectorAll('aside.sidebar input[type="number"], aside.sidebar select').forEach(el => {
+  el.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      document.getElementById("calc-btn").click();
+    }
+  });
+});
+
+// Live recalculation — any change to a field updates the result instantly
+document.querySelectorAll('aside.sidebar input[type="number"], aside.sidebar select').forEach(el => {
+  el.addEventListener("change", () => {
+    document.getElementById("calc-btn").click();
+  });
+});
+</script>
 
 </body>
 </html>

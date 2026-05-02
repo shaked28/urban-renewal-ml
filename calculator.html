@@ -687,6 +687,13 @@ document.querySelectorAll('aside.sidebar input[type="number"], aside.sidebar sel
     }
   });
 });
+
+// Live recalculation — any change to a field updates the result instantly
+document.querySelectorAll('aside.sidebar input[type="number"], aside.sidebar select').forEach(el => {
+  el.addEventListener("change", () => {
+    document.getElementById("calc-btn").click();
+  });
+});
 </script>
 
 </body>
