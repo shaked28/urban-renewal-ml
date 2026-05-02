@@ -118,7 +118,7 @@ pres.title  = "Urban Renewal Feasibility ML";
     { val: "1,800+", label: "פרויקטים פעילים\nבישראל", color: C.teal },
     { val: "< 30%", label: "מגיעים לביצוע\nבפועל", color: C.red },
     { val: "חודשים", label: "זמן בדיקה ידנית\nממוצע", color: C.teal },
-    { val: "אפס", label: "כלי סינון\nסיסטמטי", color: C.red },
+    { val: "אין", label: "כלי סינון\nשיטתי", color: C.red },
   ];
   stats.forEach((st, i) => {
     const cx = 0.35 + i * 2.35;
@@ -143,7 +143,7 @@ pres.title  = "Urban Renewal Feasibility ML";
     "בדיקות כדאיות מסורתיות הן ידניות, זמן-רבות ואינן ניתנות להשוואה",
     "שמאים אינם יכולים לסרוק מאות פרויקטים ביעילות",
     "היעדר סטנדרטיזציה מוביל להחלטות סובייקטיביות",
-    "משאבי תכנון יקרים מוצאים על פרויקטים שנדונים לכישלון"
+    "משאבי תכנון יקרים מבוזבזים על פרויקטים שנידונים מראש לכישלון"
   ];
   problems.forEach((p, i) => {
     s.addShape(pres.shapes.OVAL, {
@@ -166,7 +166,7 @@ pres.title  = "Urban Renewal Feasibility ML";
   s.background = { color: C.bg };
 
   s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 10, h: 0.85, fill: { color: C.navy } });
-  s.addText("הפתרון — Pipeline מלא מקצה לקצה", {
+  s.addText("הפתרון — מערכת מלאה מקצה לקצה", {
     x: 0.3, y: 0.08, w: 9.4, h: 0.68,
     fontSize: 26, fontFace: "Calibri", bold: true,
     color: C.white, align: "right", rtlMode: true
@@ -178,7 +178,7 @@ pres.title  = "Urban Renewal Feasibility ML";
     { icon: "⚙️", title: "Feature Eng.", sub: "+6 פיצ'רים\nמחושבים" },
     { icon: "🔄", title: "Preprocessing", sub: "Scaler +\nOneHotEncoder" },
     { icon: "🤖", title: "ML Pipeline", sub: "4 מודלים\n× Classification + Reg" },
-    { icon: "🏆", title: "Auto Select", sub: "AUC / RMSE\nבאופן אוטומטי" },
+    { icon: "🏆", title: "בחירה אוטומטית", sub: "AUC / RMSE\nבאופן אוטומטי" },
     { icon: "📊", title: "Streamlit UI", sub: "SHAP +\nSensitivity" },
   ];
 
@@ -222,8 +222,8 @@ pres.title  = "Urban Renewal Feasibility ML";
     { label: "ציון 0–100 רציף", icon: "🎯" },
     { label: "סיווג בינארי", icon: "✅" },
     { label: "SHAP Explainability", icon: "🔍" },
-    { label: "ניתוח רגישות 5 תרחישים", icon: "📈" },
-    { label: "ממשק עברית RTL", icon: "🇮🇱" },
+    { label: "ניתוח רגישות — 6 תרחישים", icon: "📈" },
+    { label: "ממשק בעברית (RTL)", icon: "🇮🇱" },
   ];
   features.forEach((f, i) => {
     s.addText(`${f.icon}  ${f.label}`, {
@@ -260,7 +260,7 @@ pres.title  = "Urban Renewal Feasibility ML";
     "33 שדות מחולקים ל-4 קטגוריות",
     "כוילו לפי נתוני מדלן/יד2",
     "עלויות ממינהל הבנייה",
-    "Class imbalance: 80% כדאי",
+    "חוסר איזון במחלקות — 80% כדאי",
   ];
   dsInfo.forEach((item, i) => {
     s.addShape(pres.shapes.OVAL, {
@@ -312,7 +312,7 @@ pres.title  = "Urban Renewal Feasibility ML";
   });
 
   // Bottom note
-  s.addText("ההנדסה שיפרה AUC בממוצע +0.04 נקודות | class_weight='balanced' לטיפול ב-imbalance", {
+  s.addText("הוספת הפיצ'רים המחושבים שיפרה את ה-AUC ב-0.04 בממוצע · class_weight='balanced' לטיפול בחוסר האיזון", {
     x: 0.3, y: 5.05, w: 9.4, h: 0.38,
     fontSize: 11, fontFace: "Calibri", color: C.muted, align: "center",
     italic: true
@@ -327,7 +327,7 @@ pres.title  = "Urban Renewal Feasibility ML";
   s.background = { color: C.bg };
 
   s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 10, h: 0.85, fill: { color: C.navy } });
-  s.addText("תוצאות מודלים", {
+  s.addText("תוצאות המודלים", {
     x: 0.3, y: 0.08, w: 9.4, h: 0.68,
     fontSize: 28, fontFace: "Calibri", bold: true,
     color: C.white, align: "right", rtlMode: true
@@ -374,7 +374,7 @@ pres.title  = "Urban Renewal Feasibility ML";
     [{ text: "מודל", options: { bold: true, color: C.accent } },
      { text: "AUC", options: { bold: true, color: C.accent } },
      { text: "CV-AUC", options: { bold: true, color: C.accent } }],
-    ["Logistic Reg ★", "0.9913", "0.9889"],
+    ["רגרסיה לוגיסטית ★", "0.9913", "0.9889"],
     ["Random Forest", "0.9863", "0.9904"],
     ["XGBoost", "0.9881", "0.9837"],
     ["Gradient Boost", "0.9612", "0.9627"],
@@ -397,7 +397,7 @@ pres.title  = "Urban Renewal Feasibility ML";
     [{ text: "מודל", options: { bold: true, color: C.accent } },
      { text: "RMSE", options: { bold: true, color: C.accent } },
      { text: "R²", options: { bold: true, color: C.accent } }],
-    ["Ridge ★", "4.250", "0.918"],
+    ["Ridge (L2) ★", "4.250", "0.918"],
     ["Random Forest", "4.614", "0.903"],
     ["Gradient Boost", "4.705", "0.899"],
     ["XGBoost Reg", "4.757", "0.897"],
@@ -458,10 +458,10 @@ pres.title  = "Urban Renewal Feasibility ML";
 
   // UI feature list
   const uiFeatures = [
-    "sidebar קלט עם 15+ פרמטרים",
-    "ציון גדול + verdict badge",
-    "סיכום כלכלי (revenue, costs, profit)",
-    "טבלת רגישות 6 תרחישים אוטומטיים",
+    "סרגל צד עם 15+ פרמטרי קלט",
+    "תצוגת ציון גדולה + תג \"כדאי / לא כדאי\"",
+    "סיכום כלכלי (הכנסות, עלויות, רווח)",
+    "טבלת רגישות — 6 תרחישים אוטומטיים",
     "זמן תגובה < 1 שנייה",
   ];
   uiFeatures.forEach((f, i) => {
@@ -532,7 +532,7 @@ pres.title  = "Urban Renewal Feasibility ML";
   });
 
   // SHAP explanation note
-  s.addText("ירוק = תורם לחיוב | אדום = תורם לשלילה | ערכים יחסיים (TreeExplainer)", {
+  s.addText("ירוק = תורם לכדאיות · אדום = תורם נגד · ערכי SHAP יחסיים (LinearExplainer — מנורמלים ל-100% עבור הפיצ'ר הדומיננטי)", {
     x: 0.3, y: 5.2, w: 9.4, h: 0.3,
     fontSize: 10, fontFace: "Calibri", color: C.muted, align: "center", italic: true
   });
@@ -586,10 +586,10 @@ pres.title  = "Urban Renewal Feasibility ML";
     fontSize: 18, fontFace: "Calibri", bold: true, color: C.accent, align: "right", rtlMode: true
   });
   const contribs = [
-    "כלי pre-screening אוטומטי שמסנן פרויקטים לפני הקצאת משאבי תכנון",
-    "ארכיטקטורת ML pipeline מלאה ב-< 600 שורות Python",
+    "כלי לסינון מוקדם ואוטומטי המסנן פרויקטים לפני הקצאת משאבי תכנון",
+    "ארכיטקטורת ML מלאה — פחות מ-900 שורות Python",
     "SHAP explainability שמגלה את הגורמים הדומיננטיים לכדאיות",
-    "ממשק Streamlit בעברית עם RTL מלא ו-SHAP visual",
+    "ממשק Streamlit בעברית מלאה (RTL) עם הסברי SHAP חזותיים",
     "dataset ישראלי סינתטי מבוסס נתוני שוק אמת",
   ];
   contribs.forEach((c, i) => {
@@ -604,7 +604,7 @@ pres.title  = "Urban Renewal Feasibility ML";
   });
 
   // Future work
-  s.addText("המשך מוצע: הוספת folium map · Streamlit Cloud deployment · batch CSV mode", {
+  s.addText("המשך מוצע: מפת חום גיאוגרפית (folium) · עיבוד אצווה (CSV) · שילוב נתוני שוק חיים", {
     x: 0.3, y: 5.15, w: 9.4, h: 0.35,
     fontSize: 11, fontFace: "Calibri", color: C.muted, align: "center", italic: true
   });

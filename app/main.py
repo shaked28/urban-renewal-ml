@@ -382,3 +382,15 @@ else:
         **מקורות נתונים**: מחירי שוק ממדלן/יד2, עלויות בנייה ממינהל הבנייה,
         לוחות זמנים מהרשות להתחדשות עירונית.
         """)
+
+    st.markdown(
+        """
+        <div style="margin-top:40px; padding:18px 0 10px; border-top:1px solid #1e3a54;
+                    text-align:center; color:#7a9ab0; font-size:0.85rem; direction:rtl;">
+            מפותח ע&quot;י <strong style="color:#c8dff0">שקד עקריש</strong>
+            · הקריה האקדמית אונו · סמסטר קיץ תשפ&quot;ה
+            · מנחה: ד&quot;ר איל זינגר
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )

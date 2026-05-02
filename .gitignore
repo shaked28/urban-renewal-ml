@@ -37,6 +37,12 @@ package-lock.json
 docs/mvp_report.docx.bak
 docs/final_report.docx.bak
 
+# Office lock/temp files
+~$*
+
+# Local git backup (filter-branch safety copy — local only)
+.git.backup-*/
+
 # Unpacked docx/pptx directories
 *_unpacked/
 

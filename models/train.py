@@ -6,7 +6,10 @@ from pathlib import Path
 
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor, GradientBoostingClassifier
+from sklearn.ensemble import (
+    RandomForestClassifier, RandomForestRegressor,
+    GradientBoostingClassifier, GradientBoostingRegressor,
+)
 from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.metrics import (
     roc_auc_score, classification_report, confusion_matrix,
@@ -117,16 +120,13 @@ def train_all(X, y_cls, y_reg, num_cols, cat_cols):
     reg_models = {
         "ridge": Ridge(alpha=1.0),
         "random_forest_reg": RandomForestRegressor(n_estimators=200, max_depth=10, random_state=42),
-        "gradient_boosting_reg": GradientBoostingClassifier(n_estimators=200, max_depth=4, learning_rate=0.05, random_state=42),
+        "gradient_boosting_reg": GradientBoostingRegressor(n_estimators=200, max_depth=4, learning_rate=0.05, random_state=42),
     }
     if HAS_XGB:
         reg_models["xgboost_reg"] = XGBRegressor(
             n_estimators=300, max_depth=5, learning_rate=0.05,
             random_state=42, verbosity=0
         )
-    reg_models["gradient_boosting_reg"] = __import__(
-        "sklearn.ensemble", fromlist=["GradientBoostingRegressor"]
-    ).GradientBoostingRegressor(n_estimators=200, max_depth=4, learning_rate=0.05, random_state=42)
 
     best_reg_score = 9999
     best_reg_name  = None

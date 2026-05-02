@@ -14,7 +14,7 @@ description: >
 ```
 urban_renewal_project/
 ├── data/
-│   └── urban_renewal_dataset.xlsx     ← 500 עסקאות, 31 עמודות
+│   └── urban_renewal_dataset.xlsx     ← 500 עסקאות, 33 עמודות
 ├── models/
 │   ├── train.py                       ← Pipeline אימון מלא
 │   ├── best_classifier.pkl            ← נוצר אחרי train
@@ -143,7 +143,19 @@ X_res, y_res = SMOTE(random_state=42).fit_resample(X_train_enc, y_train)
 ```markdown
 ## פגישה 1 — [תאריך]
 **נוכחים**: שקד עקריש, ד"ר איל זינגר
-**נושאים**: הגדרת פרויקט, אישור dataset, מבנה מודל
+**נושאים**: ...
 **החלטות**: ...
 **משימות לפגישה הבאה**: ...
 ```
+
+## Deployment
+
+הפרויקט מוגדר לפריסה ב-**Streamlit Community Cloud** (אינו רץ מקומית בלבד).
+
+קבצים רלוונטיים:
+- `runtime.txt` → `python-3.12`
+- `.streamlit/config.toml` → תמה כהה + RTL
+- `requirements.txt` → טווחי גרסאות תואמים ל-Python 3.12
+- `DEPLOY.md` → הוראות מלאות צעד-אחר-צעד
+
+URL חיה: https://urban-renewal-ml.streamlit.app/ (ייווצר לאחר פריסה ראשונה).

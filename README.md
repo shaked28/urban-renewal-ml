@@ -1,11 +1,20 @@
 # 🏗️ Urban Renewal Feasibility Scoring Tool
 ### כלי ML לבדיקת כדאיות עסקאות התחדשות עירונית בישראל
 
-![Python](https://img.shields.io/badge/Python-3.14+-blue)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.55+-red)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-1.8+-orange)
+![Python](https://img.shields.io/badge/Python-3.12+-blue)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.32+-red)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3+-orange)
 ![Tests](https://img.shields.io/badge/Tests-6%2F6%20passing-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-green)
+
+---
+
+## 🚀 Live Demo
+
+**אפליקציה חיה:** https://urban-renewal-ml.streamlit.app/
+
+> ה-URL ייווצר לאחר דחיפת הרפו ל-GitHub ופריסה ב-Streamlit Community Cloud.
+> הוראות פריסה צעד-אחר-צעד נמצאות בקובץ [`DEPLOY.md`](DEPLOY.md).
 
 ---
 
@@ -56,7 +65,7 @@ streamlit run app/main.py
 | Gradient Boosting Reg | 4.705 | 0.899 | |
 | XGBoost Reg | 4.757 | 0.897 | |
 
-> מדדים אמיתיים שנמדדו על test set (20%, stratified). אימון על Python 3.14 / scikit-learn 1.8.
+> מדדים אמיתיים שנמדדו על test set (20%, stratified). אימון על Python 3.12 / scikit-learn 1.3+.
 
 ---
 
@@ -146,3 +155,27 @@ urban_renewal_project/
 ## License
 
 MIT
+
+---
+
+## Deployment (Streamlit Community Cloud)
+
+האפליקציה נפרסת חינם ב-Streamlit Community Cloud (אינה רצה מקומית בלבד).
+ראה [`DEPLOY.md`](DEPLOY.md) להוראות מלאות. תמצית:
+
+```bash
+# 1. צור רפו ב-GitHub: shaked-akrish/urban-renewal-ml (Public)
+git remote set-url origin https://github.com/shaked-akrish/urban-renewal-ml.git
+git add -A
+git commit -m "Prepare for Streamlit Cloud deployment"
+git push -u origin main
+
+# 2. גש ל-https://share.streamlit.io
+# 3. New app → בחר את הרפו → branch=main → main file=app/main.py → Deploy
+# 4. עדכן את docs/index.html עם ה-URL הסופי שתקבל
+```
+
+קבצי תצורה לפריסה:
+- `runtime.txt` → `python-3.12`
+- `.streamlit/config.toml` → תמה כהה + RTL
+- `requirements.txt` → טווחי גרסאות תואמים ל-Python 3.12
